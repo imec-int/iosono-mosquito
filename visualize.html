@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Graph 3D line demo</title>
+
+    <style>
+        body {
+            font: 10pt arial;
+        }
+    </style>
+
+    <script type="text/javascript" src="node_modules/vis/dist/vis.js"></script>
+
+    <script type="text/javascript">
+        var data = null;
+        var graph = null;
+
+        // Called when the Visualization API is loaded.
+        function drawVisualization(json) {
+            // Create and populate a data table.
+            data = new vis.DataSet();
+
+            // create some nice looking data with sin/cos
+            /*var steps = 500;
+            var axisMax = 314;
+            var tmax = 4 * 2 * Math.PI;
+            var axisStep = axisMax / steps;
+            for (var t = 0; t < tmax; t += tmax / steps) {
+                var r = 1;
+                var x = r * Math.sin(t);
+                var y = r * Math.cos(t);
+                var z = t / tmax;
+                data.add({
+                    x: x,
+                    y: y,
+                    z: z
+                });
+            }*/
+
+              var points = JSON.parse(json);
+
+              points.forEach(function (point) {
+                data.add(point);
+              });
+
+
+            // specify options
+            var options = {
+                width: '600px',
+                height: '600px',
+                style: 'line',
+                showPerspective: false,
+                showGrid: true,
+                keepAspectRatio: true,
+                verticalRatio: 1.0
+            };
+
+            // create our graph
+            var container = document.getElementById('mygraph');
+            graph = new vis.Graph3d(container, data, options);
+
+            graph.setCameraPosition(0.4, undefined, undefined);
+        }
+
+
+        function readSingleFile(e) {
+            var file = e.target.files[0];;
+            if (!file) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var contents = e.target.result;
+                drawVisualization(contents);
+            };
+            reader.readAsText(file);
+        }
+        function init () {
+        document.getElementById('file-input').addEventListener('change', readSingleFile, false);
+        }
+    </script>
+</head>
+
+<body onload="init()">
+    <input type="file" id="file-input" />
+    <div id="mygraph"></div>
+
+    <div id="info"></div>
+</body>
+
+</html>
